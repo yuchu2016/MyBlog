@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuchu.dao.PostsMapper">
+  <resultMap id="BaseResultMap" type="com.yuchu.pojo.Posts">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="label_img" jdbcType="VARCHAR" property="labelImg" />
+    <result column="cat_id" jdbcType="INTEGER" property="catId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+    <result column="created_at" jdbcType="INTEGER" property="createdAt" />
+    <result column="updated_at" jdbcType="INTEGER" property="updatedAt" />
+  </resultMap>
+  <resultMap id="InfoResultMap" type="com.yuchu.pojo.Posts">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="label_img" jdbcType="VARCHAR" property="labelImg" />
+    <result column="cat_id" jdbcType="INTEGER" property="catId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+    <result column="updated_at" jdbcType="INTEGER" property="updatedAt"/>
+  </resultMap>
+   <resultMap id="ValidResultMap" type="com.yuchu.pojo.Posts">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yuchu.pojo.Posts">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <resultMap id="TitleResultMap"  type="com.yuchu.pojo.Posts">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+</resultMap>
+  <sql id="Base_Column_List">
+    id, title, summary, label_img, cat_id, user_id, user_name, is_valid, created_at, 
+    updated_at
+  </sql>
+  <sql id="Title_Column_List">
+    posts.id, posts.title
+  </sql>
+  <sql id="Valid_Column_List">
+    id, title,is_valid
+  </sql>
+  <sql id="Info_Column_List">
+    id, title, summary, label_img, cat_id, user_name, is_valid, updated_at
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from posts
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 根据文章Id查找文章概要信息 -->
+  <select id="selectInfoByPostId" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Info_Column_List" />
+    from posts
+    where id = #{id,jdbcType=INTEGER}
+    and is_valid=1
+  </select>
+  <!-- 查询首页的8个文章 -->
+  <select id="selectAllInfo" resultMap="InfoResultMap">
+    select 
+    <include refid="Info_Column_List" />
+    from posts 
+    where is_valid=1
+    order by updated_at desc
+    limit 8
+  </select>
+  <!-- 后台查询文章  设置是否合法 -->
+  <select id="selectValid" resultMap="ValidResultMap">
+  	select
+  	<include refid="Valid_Column_List" />
+  	from posts
+  </select>
+  <!-- 查询所有文章信息 -->
+  <select id="selectAll" resultMap="InfoResultMap">
+    select 
+    <include refid="Info_Column_List" />
+    from posts 
+    where is_valid=1
+  </select>
+  <select id="selectTopPost" resultMap="TitleResultMap">
+  	select 
+  	<include refid="Title_Column_List"></include> 
+  	from posts,post_extends
+  	WHERE posts.id=post_extends.post_id 
+  	and is_valid=1
+  	ORDER BY post_extends.browser DESC 
+  	LIMIT 6 
+  </select>
+  <select id="selectNewPost" resultMap="TitleResultMap">
+    select 
+    <include refid="Title_Column_List" />
+    from posts 
+    where is_valid=1
+    order by created_at DESC limit 6
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from posts
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yuchu.pojo.Posts">
+    insert into posts (id, title, summary, 
+      label_img, cat_id, user_id, 
+      user_name, is_valid, created_at, 
+      updated_at, content)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, 
+      #{labelImg,jdbcType=VARCHAR}, #{catId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{userName,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT}, #{createdAt,jdbcType=INTEGER}, 
+      #{updatedAt,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuchu.pojo.Posts">
+    insert into posts
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="summary != null">
+        summary,
+      </if>
+      <if test="labelImg != null">
+        label_img,
+      </if>
+      <if test="catId != null">
+        cat_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="summary != null">
+        #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="labelImg != null">
+        #{labelImg,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null">
+        #{catId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=INTEGER},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+    <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS Id
+    </selectKey>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuchu.pojo.Posts">
+    update posts
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="summary != null">
+        summary = #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="labelImg != null">
+        label_img = #{labelImg,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null">
+        cat_id = #{catId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=INTEGER},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yuchu.pojo.Posts">
+    update posts
+    set title = #{title,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
+      label_img = #{labelImg,jdbcType=VARCHAR},
+      cat_id = #{catId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT},
+      created_at = #{createdAt,jdbcType=INTEGER},
+      updated_at = #{updatedAt,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuchu.pojo.Posts">
+    update posts
+    set title = #{title,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
+      label_img = #{labelImg,jdbcType=VARCHAR},
+      cat_id = #{catId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT},
+      created_at = #{createdAt,jdbcType=INTEGER},
+      updated_at = #{updatedAt,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

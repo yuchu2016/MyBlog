@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuchu.dao.Post_extendsMapper">
+  <resultMap id="BaseResultMap" type="com.yuchu.pojo.Post_extends">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="post_id" jdbcType="INTEGER" property="postId" />
+    <result column="browser" jdbcType="INTEGER" property="browser" />
+    <result column="collect" jdbcType="INTEGER" property="collect" />
+    <result column="praise" jdbcType="INTEGER" property="praise" />
+    <result column="comment" jdbcType="INTEGER" property="comment" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, post_id, browser, collect, praise, comment
+  </sql>
+  <sql id="Index_Column_List">
+    id, post_id, browser,comment
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from post_extends
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPostId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Index_Column_List" />
+    from post_extends
+    where post_id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from post_extends
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByPostId" parameterType="java.lang.Integer">
+    delete from post_extends
+    where post_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yuchu.pojo.Post_extends">
+    insert into post_extends (id, post_id, browser, 
+      collect, praise, comment
+      )
+    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{browser,jdbcType=INTEGER}, 
+      #{collect,jdbcType=INTEGER}, #{praise,jdbcType=INTEGER}, #{comment,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuchu.pojo.Post_extends">
+    insert into post_extends
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="browser != null">
+        browser,
+      </if>
+      <if test="collect != null">
+        collect,
+      </if>
+      <if test="praise != null">
+        praise,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="browser != null">
+        #{browser,jdbcType=INTEGER},
+      </if>
+      <if test="collect != null">
+        #{collect,jdbcType=INTEGER},
+      </if>
+      <if test="praise != null">
+        #{praise,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuchu.pojo.Post_extends">
+    update post_extends
+    <set>
+      <if test="postId != null">
+        post_id = #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="browser != null">
+        browser = #{browser,jdbcType=INTEGER},
+      </if>
+      <if test="collect != null">
+        collect = #{collect,jdbcType=INTEGER},
+      </if>
+      <if test="praise != null">
+        praise = #{praise,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuchu.pojo.Post_extends">
+    update post_extends
+    set post_id = #{postId,jdbcType=INTEGER},
+      browser = #{browser,jdbcType=INTEGER},
+      collect = #{collect,jdbcType=INTEGER},
+      praise = #{praise,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateBrowserByPostId" parameterType="java.lang.Integer">
+    update post_extends
+    set browser = browser+1
+    where post_id = #{postId,jdbcType=INTEGER}
+  </update>
+</mapper>

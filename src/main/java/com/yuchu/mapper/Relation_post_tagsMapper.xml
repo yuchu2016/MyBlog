@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuchu.dao.Relation_post_tagsMapper">
+  <resultMap id="BaseResultMap" type="com.yuchu.pojo.Relation_post_tags">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="post_id" jdbcType="INTEGER" property="postId" />
+    <result column="tag_id" jdbcType="INTEGER" property="tagId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, post_id, tag_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from relation_post_tags
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectPostIdByTagId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    post_id
+    from relation_post_tags
+    where tag_id = #{tagId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from relation_post_tags
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByPostId" parameterType="java.lang.Integer">
+    delete from relation_post_tags
+    where post_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yuchu.pojo.Relation_post_tags">
+    insert into relation_post_tags (id, post_id, tag_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuchu.pojo.Relation_post_tags">
+    insert into relation_post_tags
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="tagId != null">
+        tag_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuchu.pojo.Relation_post_tags">
+    update relation_post_tags
+    <set>
+      <if test="postId != null">
+        post_id = #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuchu.pojo.Relation_post_tags">
+    update relation_post_tags
+    set post_id = #{postId,jdbcType=INTEGER},
+      tag_id = #{tagId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
